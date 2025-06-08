@@ -9,7 +9,10 @@
 <body>
 <div class="container">
   <h1 class="mt-5">Product List</h1>
-  <a class="btn btn-primary mb-3" th:href="@{/products/new}">Create New Product</a>
+  <a class="btn btn-primary mb-3" th:href="@{/products/new}" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">Create New Product</a>
+  <form th:action="@{/logout}" method="post">
+    <input type="submit" value="LogOut"/>
+  </form>
 
   <table class="table table-bordered">
     <thead>
@@ -30,8 +33,11 @@
       <td th:text="${product.madeIn}">Made in</td>
       <td th:text="${product.price}">Price</td>
       <td>
-        <a class="btn btn-primary btn-sm" th:href="@{'/products/edit/' + ${product.id}}">Edit</a>
-        <a class="btn btn-danger btn-sm" th:href="@{'/products/delete/' + ${product.id}}">Delete</a>
+        <a class="btn btn-primary btn-sm" th:href="@{'/products/edit/' + ${product.id}}" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">Edit</a>
+        <button class="btn btn-secondary btn-sm" disabled th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">Edit</button>
+
+        <a class="btn btn-danger btn-sm" th:href="@{'/products/delete/' + ${product.id}}" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">Delete</a>
+        <button class="btn btn-secondary btn-sm" disabled th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">Delete</button>
       </td>
     </tr>
     </tbody>

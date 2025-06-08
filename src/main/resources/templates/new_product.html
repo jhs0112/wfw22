@@ -11,6 +11,7 @@
     <h1 class="mt-5 text-center">Create New Product</h1>
     <br />
     <form th:action="@{/products/save}" th:object="${product}" method="post">
+        <input type="hidden" th:field="*{id}" />
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="mb-3">

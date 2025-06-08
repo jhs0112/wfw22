@@ -1,6 +1,7 @@
 package kr.ac.hansung.cse.hellospringdatajpa.controller;
 
 import kr.ac.hansung.cse.hellospringdatajpa.entity.Product;
+import kr.ac.hansung.cse.hellospringdatajpa.service.CheckRole;
 import kr.ac.hansung.cse.hellospringdatajpa.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,10 @@ public class ProductController {
     @Autowired
     private ProductService service;
 
+    @Autowired
+    private CheckRole checkRole;
+
+
     @GetMapping({"", "/"}) // products 또는 /products/ 둘 다 매핑
     public String viewHomePage(Model model) {
 
@@ -27,6 +32,9 @@ public class ProductController {
 
     @GetMapping("/new")
     public String showNewProductPage(Model model) {
+        if (!checkRole.isAdmin()) {
+            return "redirect:/products";
+        }
 
         Product product = new Product();
         model.addAttribute("product", product);
@@ -36,6 +44,9 @@ public class ProductController {
 
     @GetMapping("/edit/{id}")
     public String showEditProductPage(@PathVariable(name = "id") Long id, Model model) {
+        if (!checkRole.isAdmin()) {
+            return "redirect:/products";
+        }
 
         Product product = service.get(id);
         model.addAttribute("product", product);
@@ -48,6 +59,9 @@ public class ProductController {
     //  JSON 데이터(예: {"name": "Laptop", "brand": "Samsung", "madeIn": "Korea", "price": 1000.00})를 Product 객체에 매핑
     @PostMapping("/save")
     public String saveProduct(@ModelAttribute("product") Product product) {
+        if (!checkRole.isAdmin()) {
+            return "redirect:/products";
+        }
 
         service.save(product);
 
@@ -56,6 +70,9 @@ public class ProductController {
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable(name = "id") Long id) {
+        if (!checkRole.isAdmin()) {
+            return "redirect:/products";
+        }
 
         service.delete(id);
         return "redirect:/products";
